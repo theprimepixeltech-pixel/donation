@@ -1,0 +1,32 @@
+CREATE TABLE IF NOT EXISTS users (
+ id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL COLLATE NOCASE UNIQUE,
+ password TEXT NOT NULL, role TEXT NOT NULL CHECK(role IN ('admin','user')), created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS memberships (
+ id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL UNIQUE REFERENCES users(id), mobile TEXT NOT NULL,
+ address TEXT NOT NULL, interest TEXT NOT NULL, message TEXT NOT NULL,
+ status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
+ member_id TEXT UNIQUE, token TEXT UNIQUE, valid_until TEXT, review_note TEXT DEFAULT '', created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS enquiries (
+ id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, mobile TEXT, category TEXT NOT NULL,
+ organisation TEXT, interest TEXT, message TEXT NOT NULL, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS donations (
+ id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES users(id), name TEXT NOT NULL, email TEXT NOT NULL,
+ mobile TEXT NOT NULL, address TEXT NOT NULL, purpose TEXT NOT NULL, amount INTEGER NOT NULL CHECK(amount>0),
+ public_consent INTEGER NOT NULL DEFAULT 0, anonymous INTEGER NOT NULL DEFAULT 0,
+ status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','paid','failed')),
+ provider_order TEXT UNIQUE, payment_id TEXT UNIQUE, receipt_no TEXT UNIQUE, paid_at TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS posts (
+ id INTEGER PRIMARY KEY, type TEXT NOT NULL CHECK(type IN ('event','news','story','initiative')),
+ title TEXT NOT NULL, body TEXT NOT NULL, event_date TEXT, published INTEGER DEFAULT 0, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS documents (
+ id INTEGER PRIMARY KEY, title TEXT NOT NULL, category TEXT NOT NULL, filename TEXT NOT NULL,
+ mime TEXT NOT NULL, published INTEGER DEFAULT 0, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS settings (name TEXT PRIMARY KEY,value TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS login_attempts (key TEXT PRIMARY KEY, failures INTEGER NOT NULL DEFAULT 0, last_attempt INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS audit_log (id INTEGER PRIMARY KEY,user_id INTEGER REFERENCES users(id),action TEXT NOT NULL,detail TEXT NOT NULL,created_at TEXT DEFAULT CURRENT_TIMESTAMP);

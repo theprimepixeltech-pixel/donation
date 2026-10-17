@@ -1,0 +1,1 @@
+<div class="account-nav"><a class="text-link" href="/member-login">Membership</a><a class="text-link" href="/donor-dashboard">Giving history</a><form method="post"><?= csrf() ?><input type="hidden" name="action" value="logout"><button class="btn small">Sign out</button></form></div>

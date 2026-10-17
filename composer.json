@@ -1,0 +1,7 @@
+{
+  "name": "hope-foundation/website",
+  "description": "The Hope Foundation PHP website and administration portal",
+  "type": "project",
+  "require": {"php": "^8.3", "ext-pdo": "*", "ext-pdo_sqlite": "*", "ext-mbstring": "*", "ext-dom": "*", "dompdf/dompdf": "^3.1", "bacon/bacon-qr-code": "^3.0"},
+  "config": {"platform": {"php": "8.3.0"}, "sort-packages": true}
+}

@@ -1,5 +1,5 @@
 <?php
-require dirname(__DIR__) . '/app/bootstrap.php';
+try { require dirname(__DIR__) . '/app/bootstrap.php'; } catch (Throwable $error) { error_log($error->getMessage()); http_response_code(503); exit('The website is temporarily unavailable. Please contact the administrator.'); }
 require dirname(__DIR__) . '/app/content.php';
 $path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '', '/');
 $page = $path === '' || $path === 'index.php' ? 'home' : $path;

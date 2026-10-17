@@ -10,7 +10,7 @@ $programmes = [
 $pages = [
  'home'=>['Welcome',''],
  'about'=>['A foundation built on hope.','Our purpose is simple: help people access the care, learning, and opportunities they deserve.'],
- 'work'=>['Care that creates possibility.','Explore our proposed areas of work, from individual support to stronger communities.'],
+ 'work'=>['Care that creates possibility.','Explore our areas of work, from individual support to stronger communities.'],
  'initiatives'=>['Local roots. Lasting change.','Centres and programmes bring our mission closer to the communities we serve.'],
  'impact'=>['Behind every number, a person.','Our impact will be measured through meaningful outcomes and transparent reporting.'],
  'certificates'=>['Trust begins with transparency.','Registration and approval documents will be published here after verification.'],
@@ -25,3 +25,5 @@ $pages = [
  'verify'=>['Verify a membership','Confirm membership authenticity using a Member ID or verification QR link.'],
  'admin'=>['Administration','Manage the Foundation’s operations through a secure administration platform.'],
 ];
+
+$pages += ['login'=>['Sign in','Access your member and donor account.'],'register'=>['Create an account','Join a community built around hope.'],'gallery'=>['A glimpse of our community','Photographs from our programmes and activities.'],'donor-wall'=>['Thank you for making hope possible.','Celebrating donors who have chosen to share their support.'],'privacy'=>['Privacy notice','How this website handles your information.']];
