@@ -1,4 +1,9 @@
 <?php
+function load_document_dependencies(): void {
+ $autoload=dirname(__DIR__).'/vendor/autoload.php';
+ if (!is_file($autoload)) { http_response_code(503); error_log('PDF dependencies missing: run composer install --no-dev from the application root.'); throw new DomainException('Document downloads are temporarily unavailable. Please contact the Foundation.'); }
+ require_once $autoload;
+}
 function process_webhook(array $config): void { http_response_code(503); header('Content-Type: application/json'); echo json_encode(['error'=>'Payments are disabled.']); }
 function create_donation(array $config): never {
  $u=require_user(); $name=field('name',120); $email=field('email',254); $mobile=field('mobile',30); $address=field('address',1000); $purpose=field('purpose',120); $amount=field('amount',20);
@@ -35,10 +40,12 @@ function member_status(array $member): string {
  return $member['status']==='approved' && $member['valid_until']<date('Y-m-d') ? 'expired' : $member['status'];
 }
 function qr_svg(string $value): string {
+ load_document_dependencies();
  $renderer=new BaconQrCode\Renderer\ImageRenderer(new BaconQrCode\Renderer\RendererStyle\RendererStyle(180),new BaconQrCode\Renderer\Image\SvgImageBackEnd());
  return (new BaconQrCode\Writer($renderer))->writeString($value);
 }
 function output_pdf(string $html, string $filename): never {
+ load_document_dependencies();
  $pdf=new Dompdf\Dompdf(['isRemoteEnabled'=>false,'defaultFont'=>'DejaVu Sans']); $pdf->loadHtml($html); $pdf->setPaper('A4'); $pdf->render(); $pdf->stream($filename,['Attachment'=>true]); exit;
 }
 function pdf_style(): string { return '<style>body{font-family:DejaVu Sans;color:#214b3b;font-size:13px}h1{font-size:30px}h2{font-size:23px}.box{border:3px solid #245744;padding:35px}small{color:#667}table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left}</style>'; }

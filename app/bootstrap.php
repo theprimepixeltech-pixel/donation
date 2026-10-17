@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+// Public pages and account workflows use native PHP; PDF dependencies load on demand.
 require_once __DIR__ . '/database.php';
 require_once __DIR__ . '/services.php';
 $config = require __DIR__ . '/config/site.php';

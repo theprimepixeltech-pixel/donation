@@ -1,6 +1,6 @@
 # The Hope Foundation
 
-Multipage PHP 8.3+ application with SQLite persistence, public pages, member and donor accounts, and a protected admin panel. The original standalone `index.html` sample has been removed. Set the web root to **public/**.
+Multipage PHP 8.3+ application with SQLite persistence, public pages, member and donor accounts, and a protected admin panel. The original standalone `index.html` sample has been removed. Prefer setting the web root to **public/**. A protected repository-root entry point is also included for Hostinger direct Git deployments with Apache/LiteSpeed rewrite support.
 
 ## Install and run
 
@@ -20,11 +20,11 @@ docker build -t hope-foundation .
 docker run --rm -p 8080:8080 -e HOPE_URL=http://localhost:8080 -v hope-data:/app/storage hope-foundation
 ```
 
-The built-in PHP server is for development. For production use PHP-FPM with Nginx or Apache, HTTPS, backups, monitored error logs, and restrictive filesystem permissions. Point DocumentRoot at `public/`. Apache requires mod_rewrite and AllowOverride; Nginx should use `try_files $uri /index.php?$query_string` and pass PHP only to a configured PHP-FPM service. Never serve the repository root. Keep `storage/`, `.git/`, `vendor/` and `app/` private. The PHP process needs write access only to private storage and its session directory.
+The built-in PHP server is for development. For production use PHP-FPM with Nginx or Apache, HTTPS, backups, monitored error logs, and restrictive filesystem permissions. Point DocumentRoot at `public/`. Apache requires mod_rewrite and AllowOverride; Nginx should use `try_files $uri /index.php?$query_string` and pass PHP only to a configured PHP-FPM service. On servers where you control the document root, use `public/`. Repository-root hosting is supported only on Apache/LiteSpeed with the supplied root `.htaccess` protections active. Keep `storage/`, `.git/`, `vendor/` and `app/` private. The PHP process needs write access only to private storage and its session directory.
 
 ## Hostinger / public_html hosting
 
-Use the safe split-directory upload package described in [Hostinger deployment](docs/HOSTINGER.md). It includes Composer dependencies and keeps private files outside `public_html`. Do not upload the whole repository into the public web root.
+Use the safe split-directory upload package described in [Hostinger deployment](docs/HOSTINGER.md). It includes Composer dependencies and keeps private files outside `public_html`. For direct Git deployment into `public_html`, the root `index.php` and `.htaccess` must both be deployed. The rewrite rules deny access to private directories; verify these protections after deployment. See the direct deployment section of the hosting guide.
 
 ## Create your administrator
 
@@ -49,6 +49,8 @@ The command prompts for a 12–72 character password without echoing it. Then si
 - Admin CSV exports (Excel compatible, formula-escaped) and PDF reports.
 - Gallery and certificate downloads are served from private storage with publication checks; accepted uploads are MIME-checked PDF/JPEG/PNG files up to 5 MB.
 
+Public pages and core account workflows work without Composer dependencies. Install the locked dependencies to enable PDF and QR documents; a missing PDF dependency does not take the entire website offline.
+
 ## Payments and remaining launch requirements
 
 **Payments are disabled at the owner’s request.** Pledges never count as paid donations and do not generate receipts. No real or test payment success can be triggered through this website. Payment status reconciliation, automatically numbered payment receipts, recurring mandates and email/WhatsApp delivery require a selected provider and integration. Receipt download permissions are implemented, but the application does not issue receipts without a future verified payment flow. PAN is intentionally not collected for unpaid pledges.
@@ -70,7 +72,7 @@ app/
   content.php           # public route metadata
   views/                # shared templates, account and admin views
 bin/admin.php           # private admin provisioning CLI
-public/                 # sole web document root
+public/                 # preferred web document root
 storage/                # private database and uploads (gitignored)
 tests/integration.py    # HTTP workflow and access-control tests
 ```
@@ -78,6 +80,8 @@ tests/integration.py    # HTTP workflow and access-control tests
 Environment values must be exported into the PHP process; `.env.example` documents them and no `.env` loader is installed. `HOPE_STORAGE` optionally changes the private storage directory; `HOPE_DB` optionally overrides the database path. Back up the database consistently using SQLite backup tooling, together with uploaded files.
 
 ## Checks
+
+`tests/hosting.py` checks the repository-root Apache layout at port 8081, including private-file denial.
 
 ```sh
 find app public bin -name '*.php' -exec php -l {} \;

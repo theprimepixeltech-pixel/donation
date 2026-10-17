@@ -27,3 +27,5 @@ $pages = [
 ];
 
 $pages += ['login'=>['Sign in','Access your member and donor account.'],'register'=>['Create an account','Join a community built around hope.'],'gallery'=>['A glimpse of our community','Photographs from our programmes and activities.'],'donor-wall'=>['Thank you for making hope possible.','Celebrating donors who have chosen to share their support.'],'privacy'=>['Privacy notice','How this website handles your information.']];
+
+foreach (['member-card','member-certificate','receipt','export'] as $documentRoute) $pages[$documentRoute] = ['Document unavailable','Please check the message below.'];

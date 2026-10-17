@@ -1,6 +1,20 @@
 # Hostinger deployment
 
-The GitHub repository has its entry point in `public/index.php`. Uploading the whole repository into `public_html` leaves no root index and can produce **403 Forbidden**. Files or directories with restrictive upload permissions can also produce 403. A 503 after this is fixed typically indicates PHP dependencies, extensions, or storage permissions; check the hosting PHP error log.
+The preferred entry point is `public/index.php`. Earlier versions had no repository-root entry point, so deploying the whole repository into `public_html` could produce **403 Forbidden**. The latest version also includes a protected root entry point for direct Git deployments. Restrictive file/directory permissions can independently cause 403. A 503 after this is fixed typically indicates PHP dependencies, extensions, or storage permissions; check the hosting PHP error log.
+
+## Direct Git deployment into public_html
+
+The repository now includes a root `index.php` and root `.htaccess`, so a direct Git deployment can work without moving folders. Deploy the latest `main` commit into the domain’s actual `public_html` (not a nested `public_html/donation` folder). Include hidden files, particularly the root `.htaccess`.
+
+1. In hPanel redeploy the latest GitHub commit. Confirm `public_html/index.php` and `public_html/.htaccess` exist.
+2. Select PHP 8.3+ with PDO SQLite, mbstring, DOM and fileinfo.
+3. Use 755 for code directories and 644 for code files. Give the account’s PHP process write access to `storage/` (normally owner-only access is sufficient); do not use 777.
+4. Visit `/`, `/about`, `/login` and `/assets/css/site.css`.
+5. Verify `/app/config/site.php`, `/storage/hope.sqlite`, `/composer.json` and `/.git/config` return **403**, never their contents. If private paths are accessible, stop using repository-root hosting and use the split-directory package or ask the provider to change the document root to `public/`.
+6. In Hostinger’s terminal run `composer install --no-dev` from `public_html` to enable PDF and QR downloads. Public pages and account workflows do not require these optional document libraries to render. Create the admin with `php bin/admin.php EMAIL 'Admin Name'`.
+7. Export `HOPE_URL` with the HTTPS website origin for QR verification links, or set the non-secret URL in `app/config/site.php` if your plan has no environment configuration.
+
+The root rewrite configuration serves only the front controller and allowlisted static assets. It blocks source, database, dependency, hidden and deployment files. Do not remove these protections. Apache/LiteSpeed must apply `.htaccess`; this fallback is not for Nginx or static hosting. The original sample `index.html` remains removed.
 
 ## Recommended: ready-to-upload package
 
@@ -44,7 +58,7 @@ php hope-private/bin/admin.php admin@your-foundation.org 'Foundation Administrat
 
 If the CLI uses an older PHP version than the website, select the hosting provider’s PHP 8.3+ CLI command. There is no default admin password or public setup page.
 
-Do not place `app`, `vendor`, `storage`, `.git`, or backups under `public_html`. If the whole repository was previously uploaded there, move those private files outside the public directory as part of deployment. Do not blindly delete files from an existing site.
+For this split-directory package, keep `app`, `vendor`, `storage`, `.git`, and backups outside `public_html`. If the whole repository was previously uploaded there, move those private files outside the public directory as part of deployment. Do not blindly delete files from an existing site.
 
 If your plan cannot store files above `public_html`, ask Hostinger support to point the website document root at the repository’s `public/` directory. Do not expose the whole repository as a workaround. This application requires PHP hosting; static-only hosting cannot run it.
 

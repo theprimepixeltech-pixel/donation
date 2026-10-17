@@ -1,6 +1,10 @@
 DirectoryIndex index.php
 Options -Indexes
 RewriteEngine On
+# In repository-root hosting, this directory serves static assets only.
+# Its own per-directory rules must not bypass the root protections.
+RewriteCond %{DOCUMENT_ROOT}/public/index.php -f
+RewriteRule !^assets/[A-Za-z0-9_/-]+\.(?:css|js|png|jpe?g|svg|webp|ico|woff2?)$ - [F,L,NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [L]

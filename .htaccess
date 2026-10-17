@@ -1,0 +1,20 @@
+DirectoryIndex index.php
+Options -Indexes
+RewriteEngine On
+
+# Permit standard certificate renewal challenges, never arbitrary dotfiles.
+RewriteRule ^\.well-known/acme-challenge/[A-Za-z0-9_-]+$ - [L]
+RewriteRule (^|/)\. - [F,L]
+
+# Private source, records, dependencies and deployment files must not be served.
+RewriteRule ^(?:app|bin|vendor|storage|tests|docs|dist)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:composer\.(?:json|lock)|Dockerfile|README\.md|HOSTINGER-INSTRUCTIONS\.txt)$ - [F,L,NC]
+
+# Only static asset types can be served from the nested public directory.
+RewriteRule ^public/assets/[A-Za-z0-9_/-]+\.(?:css|js|png|jpe?g|svg|webp|ico|woff2?)$ - [L,NC]
+RewriteRule ^public(?:/|$) - [F,L,NC]
+RewriteRule ^assets/([A-Za-z0-9_/-]+\.(?:css|js|png|jpe?g|svg|webp|ico|woff2?))$ public/assets/$1 [L,NC]
+
+# Route everything else through PHP, including requests for unapproved files.
+RewriteRule ^index\.php$ - [L]
+RewriteRule ^ index.php [L]

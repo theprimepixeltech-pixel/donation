@@ -53,8 +53,10 @@ visitor, user, admin, other = Client(), Client(), Client(), Client()
 for page in ['', 'about', 'work', 'initiatives', 'impact', 'certificates', 'partnerships', 'membership', 'get-involved', 'donate', 'events', 'contact', 'gallery', 'donor-wall', 'privacy', 'login', 'register', 'verify']:
     code, html, _ = visitor.get('/'+page)
     assert code == 200 and b'<footer>' in html, (page, code, html[:200])
-for path in ['/missing','/index.html','/app/schema.sql','/storage/hope.sqlite','/.git/config']:
+for path in ['/missing','/index.html']:
     assert visitor.get(path)[0] == 404, path
+for path in ['/app/schema.sql','/storage/hope.sqlite','/.git/config']:
+    assert visitor.get(path)[0] in (403,404), path
 assert b'Sign in' in visitor.get('/admin')[1]
 assert visitor.post('/contact', {'action':'enquiry','csrf':'invalid'},False)[0] == 403
 print('PASS: public routes, removed sample, private paths and CSRF')
