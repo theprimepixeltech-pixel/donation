@@ -22,6 +22,10 @@ docker run --rm -p 8080:8080 -e HOPE_URL=http://localhost:8080 -v hope-data:/app
 
 The built-in PHP server is for development. For production use PHP-FPM with Nginx or Apache, HTTPS, backups, monitored error logs, and restrictive filesystem permissions. Point DocumentRoot at `public/`. Apache requires mod_rewrite and AllowOverride; Nginx should use `try_files $uri /index.php?$query_string` and pass PHP only to a configured PHP-FPM service. Never serve the repository root. Keep `storage/`, `.git/`, `vendor/` and `app/` private. The PHP process needs write access only to private storage and its session directory.
 
+## Hostinger / public_html hosting
+
+Use the safe split-directory upload package described in [Hostinger deployment](docs/HOSTINGER.md). It includes Composer dependencies and keeps private files outside `public_html`. Do not upload the whole repository into the public web root.
+
 ## Create your administrator
 
 There is no default password or public setup endpoint. Create the first admin on the server:
